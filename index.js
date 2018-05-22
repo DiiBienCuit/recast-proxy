@@ -17,7 +17,8 @@ app.post('/errors', (req, res) => {
   res.sendStatus(200);
 });
 
-app.post('/eployees/manager', (req, res) => {
+app.post('/employees/manager', (req, res) => {
+  console.log(JSON.stringify(req.body, null, 2));
   res.send(JSON.stringify(req.body, null, 2));
 });
 
