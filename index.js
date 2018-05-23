@@ -37,6 +37,10 @@ app.post('/employees/manager', (req, res) => {
     .capitalize()
     .value();
 
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`Received POST request with employeeName = ${employeeName} and employeeSurname = ${employeeSurname}`);
+  }
+
   axios
     .get(`${process.env.XSA_ENDPOINT}?name=${employeeName}&surname=${employeeSurname}`, {
       httpsAgent: agent
@@ -46,6 +50,10 @@ app.post('/employees/manager', (req, res) => {
       // one amployees have the same name, surname but different managers
       const managerName = _.get(response.data[0], 'NAME');
       const managerSurname = _.get(response.data[0], 'SURNAME');
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Found manager name = ${managerName} and surname = ${managerSurname}`);
+      }
 
       const message = [{ // message to send back to Recast
         type: 'quickReplies',
@@ -64,6 +72,8 @@ app.post('/employees/manager', (req, res) => {
     });
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`App started on port ${process.env.PORT}`);
+const port = parseInt(process.env.PORT, 10) || 5000;
+
+app.listen(port, () => {
+  console.log(`App started on port ${port}`);
 });
