@@ -27,22 +27,36 @@ app.post('/errors', (req, res) => {
 });
 
 app.post('/employees/manager', (req, res) => {
-  const name = _.chain(req.body)
+  const employeeName = _.chain(req.body)
     .get('conversation.memory.name.value')
     .capitalize()
     .value();
 
-  const surname = _.chain(req.body)
+  const employeeSurname = _.chain(req.body)
     .get('conversation.memory.surname.value')
     .capitalize()
     .value();
 
   axios
-    .get(`${process.env.XSA_ENDPOINT}?name=${name}&surname=${surname}`, {
+    .get(`${process.env.XSA_ENDPOINT}?name=${employeeName}&surname=${employeeSurname}`, {
       httpsAgent: agent
     })
     .then((response) => {
-      res.send(response.data);
+      // conveniently avoid (for demo purposes!) cases where more than
+      // one amployees have the same name, surname but different managers
+      const managerName = _.get(response.data[0], 'NAME');
+      const managerSurname = _.get(response.data[0], 'SURNAME');
+
+      const message = [{ // message to send back to Recast
+        type: 'quickReplies',
+        content: {
+          title: response.data && response.data.length > 0
+            ? `The manager of ${employeeName} ${employeeSurname} is ${managerName} ${managerSurname}`
+            : `${employeeName} ${employeeSurname} is a strong independent person that needs no manager! ;-)`
+        }
+      }];
+
+      res.send(message);
     })
     .catch((err) => {
       console.error('err');
