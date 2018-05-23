@@ -55,16 +55,16 @@ app.post('/employees/manager', (req, res) => {
         console.log(`Found manager name = ${managerName} and surname = ${managerSurname}`);
       }
 
-      const message = [{ // message to send back to Recast
-        type: 'quickReplies',
-        content: {
-          title: response.data && response.data.length > 0
+      const reply = { // message to send back to Recast
+        replies: [{
+          type: 'text',
+          content: response.data && response.data.length > 0
             ? `The manager of ${employeeName} ${employeeSurname} is ${managerName} ${managerSurname}`
             : `${employeeName} ${employeeSurname} is a strong independent person that needs no manager! ;-)`
-        }
-      }];
+        }]
+      };
 
-      res.send(message);
+      res.send(reply);
     })
     .catch((err) => {
       console.error('err');
