@@ -27,14 +27,18 @@ app.post('/errors', (req, res) => {
 });
 
 app.post('/employees/manager', (req, res) => {
+  // capitalize names and surnames - support strings
+  // separated by space or '-', e.g. Jean-Claude Van Damme
   const employeeName = _.chain(req.body)
     .get('conversation.memory.name.value')
-    .capitalize()
+    .split(/[\s,-]+/)
+    .map((s) => _.capitalize(s))
     .value();
 
   const employeeSurname = _.chain(req.body)
     .get('conversation.memory.surname.value')
-    .capitalize()
+    .split(/[\s,-]+/)
+    .map((s) => _.capitalize(s))
     .value();
 
   if (process.env.NODE_ENV === 'development') {
