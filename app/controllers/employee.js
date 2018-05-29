@@ -12,27 +12,26 @@ exports.getManager = (req, res) => {
   const employeeName = _.chain(req.body)
     .get('conversation.memory.name.value')
     .split(/[\s,-]+/)
-    .map((s) => _.capitalize(s))
+    .map(s => _.capitalize(s))
     .value();
 
   const employeeSurname = _.chain(req.body)
     .get('conversation.memory.surname.value')
     .split(/[\s,-]+/)
-    .map((s) => _.capitalize(s))
+    .map(s => _.capitalize(s))
     .value();
-  
+
   if (process.env.NODE_ENV === 'development') {
-    console.log(`Received POST request with employeeName = ${employeeName} and employeeSurname = ${employeeSurname}`);
+    console.log(
+      `Received POST request with employeeName = ${employeeName} and employeeSurname = ${employeeSurname}`
+    );
   }
 
-  employee.getManager(employeeName, employeeSurname)
-    .then((response) => {
-      const reply = { // init message to send back to Recast
-        replies: [{
-          type: 'text',
-          content: ''
-        }]
-      };
+  employee
+    .getManager(employeeName, employeeSurname)
+    .then(response => {
+      // init message to send back to Recast
+      const reply = { replies: [{ type: 'text', content: '' }] };
 
       // conveniently avoid (for demo purposes!) cases where more than
       // one amployees have the same name, surname but different managers
@@ -40,7 +39,9 @@ exports.getManager = (req, res) => {
       const managerSurname = _.get(response.data[0], 'SURNAME');
 
       if (process.env.NODE_ENV === 'development') {
-        console.log(`Found manager name = ${managerName} and surname = ${managerSurname}`);
+        console.log(
+          `Found manager name = ${managerName} and surname = ${managerSurname}`
+        );
       }
 
       if (!(managerName && managerSurname)) {
@@ -53,8 +54,8 @@ exports.getManager = (req, res) => {
 
       res.send(reply);
     })
-    .catch((err) => {
+    .catch(err => {
       console.error(err);
       res.send(`Error (${err.status}): ${err.statusText}`);
     });
-}
+};
