@@ -13,13 +13,15 @@ exports.getManager = (req, res) => {
     .get('conversation.memory.name.value')
     .split(/[\s,-]+/)
     .map(s => _.capitalize(s))
-    .value();
+    .value()
+    .join(' ');
 
   const employeeSurname = _.chain(req.body)
     .get('conversation.memory.surname.value')
     .split(/[\s,-]+/)
     .map(s => _.capitalize(s))
-    .value();
+    .value()
+    .join(' ');
 
   if (process.env.NODE_ENV === 'development') {
     console.log(
